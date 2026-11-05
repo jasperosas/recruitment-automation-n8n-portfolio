@@ -1,0 +1,55 @@
+{
+  "testDate": "2026-11-05",
+  "environment": "Local n8n; separate inactive test copy; pinned synthetic Sheets-node output",
+  "execution": "One mixed batch; not five separate executions",
+  "inputCount": 7,
+  "actualOutputCount": 3,
+  "expectedOutputCount": 3,
+  "result": "PASS",
+  "checks": [
+    {
+      "case": "unknown applicant",
+      "result": "excluded"
+    },
+    {
+      "case": "mismatched email",
+      "result": "excluded"
+    },
+    {
+      "case": "invalid experience category",
+      "result": "excluded"
+    },
+    {
+      "case": "duplicate applicant",
+      "result": "only one valid copy retained"
+    }
+  ],
+  "actualOutput": [
+    {
+      "Full Name": "Demo Candidate A",
+      "Email Address": "candidate-a@example.com",
+      "Position applying for": "Office Assistant",
+      "Years of experience": "6+ Years"
+    },
+    {
+      "Full Name": "Demo Candidate B",
+      "Email Address": "candidate-b@example.com",
+      "Position applying for": "Support Specialist",
+      "Years of experience": "3-5 Years"
+    },
+    {
+      "Full Name": "Demo Candidate C",
+      "Email Address": "candidate-c@example.com",
+      "Position applying for": "Operations Assistant",
+      "Years of experience": "0-2 Years"
+    }
+  ],
+  "branchCounts": {
+    "6+ Years": 1,
+    "3-5 Years": 1,
+    "0-2 Years": 1
+  },
+  "gmail": "All 3 nodes remained disabled",
+  "sheetAccess": "Pinned data used; no sheet read or write in this run",
+  "finalState": "Inactive / unpublished; synthetic inputs pinned for reproducibility"
+}

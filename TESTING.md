@@ -27,6 +27,28 @@ The routing-only workflow used its fictional `Demo Candidate` and `demo-candidat
 
 The public JSON files were not replaced with configured local exports. They retain the placeholder sheet ID and recipients, no saved credentials, inactive state and disabled Gmail nodes.
 
+## Safety-gate edge-case batch — 5 November 2026
+
+A separate inactive / unpublished copy, **TEST ONLY — Recruitment Safety Gate Edge Cases (Gmail Disabled)**, was tested with **seven pinned synthetic items** on the Sheets node. The safety-gate code and routing rules were unchanged. Pinned output bypassed the Sheets read, so this run neither read nor wrote a spreadsheet. All Gmail nodes stayed disabled.
+
+The input order was: unknown fictional applicant; Demo Candidate A with a mismatched example.com email; Demo Candidate C with `99 Years`; valid A; duplicate valid A; valid B; valid C. Invalid records and the duplicate were placed before the third valid output so the gate's three-item limit could not hide those checks.
+
+| Case in the mixed batch | Observed result |
+| --- | --- |
+| Unknown applicant | Excluded |
+| Mismatched email | Excluded; output A retained its expected address |
+| Invalid experience category | Excluded; output C retained `0-2 Years` |
+| Duplicate valid A | Only one A retained |
+| Valid controls A/B/C | Three outputs total; one item per matching experience branch |
+
+**Result: PASS.** n8n showed **Workflow executed successfully**, **7 inputs → 3 outputs**, and the output table contained only the exact expected A/B/C names, example.com emails, roles and experience categories. These four edge cases were checked together in **one mixed-batch workflow run**, not four independently executed runs.
+
+![Pinned synthetic edge-case batch reduced from seven inputs to three valid routes, with Gmail disabled](assets/safety-gate-edge-cases.png)
+
+[Gate input/output screenshot](assets/safety-gate-edge-output.png) · [Fictional fixtures and expected results](examples/safety-gate-edge-cases.json) · [Observed mixed-batch result](examples/safety-gate-edge-case-results.json)
+
+The fixture file includes expected outcomes for individual cases for future reproduction; only the mixed batch was executed in this session. The copy remains unpublished with its seven fictional inputs pinned. This demonstrates filtering and deduplication within one batch; it does not verify deduplication across executions or email-send behavior.
+
 ## Earlier owner-reported demonstration
 
 The following records describe the owner's earlier tests, not the sanitized re-execution above.
@@ -56,7 +78,7 @@ The original archived n8n workflow had a Google Sheets `rowAdded` trigger, appli
 - Automatic triggering after a real Google Form submission or on live Sheets row addition.
 - Applicant acknowledgment and HR notification nodes from the original archived workflow.
 - Emailing real candidates or processing real applications.
-- OAuth-expiry recovery, duplicate-row/duplicate-send behavior, rate limits, outages, simultaneous executions or malicious input.
+- OAuth-expiry recovery, deduplication across executions, duplicate-send behavior, rate limits, outages, simultaneous executions or comprehensive malicious-input handling.
 - Hiring outcome suitability, bias/fairness, legal compliance, or production readiness.
 
 **Note:** This demonstration uses experience bands solely to show routing logic. Actual hiring processes require human review and appropriate hiring/privacy policies.

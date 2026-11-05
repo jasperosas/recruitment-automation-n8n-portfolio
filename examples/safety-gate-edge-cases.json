@@ -1,0 +1,112 @@
+{
+  "description": "Fictional fixtures only; mixed batch ordered so all edge cases are visited before the third valid output.",
+  "cases": [
+    {
+      "name": "unknown applicant",
+      "rows": [
+        {
+          "Full Name": "Unknown Demo Applicant",
+          "Email Address": "candidate-a@example.com",
+          "Position applying for": "Office Assistant",
+          "Years of experience": "6+ Years"
+        }
+      ],
+      "expectedCount": 0
+    },
+    {
+      "name": "mismatched email",
+      "rows": [
+        {
+          "Full Name": "Demo Candidate A",
+          "Email Address": "mismatch@example.com",
+          "Position applying for": "Office Assistant",
+          "Years of experience": "6+ Years"
+        }
+      ],
+      "expectedCount": 0
+    },
+    {
+      "name": "invalid experience category",
+      "rows": [
+        {
+          "Full Name": "Demo Candidate C",
+          "Email Address": "candidate-c@example.com",
+          "Position applying for": "Operations Assistant",
+          "Years of experience": "99 Years"
+        }
+      ],
+      "expectedCount": 0
+    },
+    {
+      "name": "duplicate applicant",
+      "rows": [
+        {
+          "Full Name": "Demo Candidate A",
+          "Email Address": "candidate-a@example.com",
+          "Position applying for": "Office Assistant",
+          "Years of experience": "6+ Years"
+        },
+        {
+          "Full Name": "Demo Candidate A",
+          "Email Address": "candidate-a@example.com",
+          "Position applying for": "Office Assistant",
+          "Years of experience": "6+ Years"
+        }
+      ],
+      "expectedCount": 1
+    },
+    {
+      "name": "mixed batch",
+      "rows": [
+        {
+          "Full Name": "Unknown Demo Applicant",
+          "Email Address": "candidate-a@example.com",
+          "Position applying for": "Office Assistant",
+          "Years of experience": "6+ Years"
+        },
+        {
+          "Full Name": "Demo Candidate A",
+          "Email Address": "mismatch@example.com",
+          "Position applying for": "Office Assistant",
+          "Years of experience": "6+ Years"
+        },
+        {
+          "Full Name": "Demo Candidate C",
+          "Email Address": "candidate-c@example.com",
+          "Position applying for": "Operations Assistant",
+          "Years of experience": "99 Years"
+        },
+        {
+          "Full Name": "Demo Candidate A",
+          "Email Address": "candidate-a@example.com",
+          "Position applying for": "Office Assistant",
+          "Years of experience": "6+ Years"
+        },
+        {
+          "Full Name": "Demo Candidate A",
+          "Email Address": "candidate-a@example.com",
+          "Position applying for": "Office Assistant",
+          "Years of experience": "6+ Years"
+        },
+        {
+          "Full Name": "Demo Candidate B",
+          "Email Address": "candidate-b@example.com",
+          "Position applying for": "Support Specialist",
+          "Years of experience": "3-5 Years"
+        },
+        {
+          "Full Name": "Demo Candidate C",
+          "Email Address": "candidate-c@example.com",
+          "Position applying for": "Operations Assistant",
+          "Years of experience": "0-2 Years"
+        }
+      ],
+      "expectedCount": 3,
+      "expectedSourceIndexes": [
+        3,
+        5,
+        6
+      ]
+    }
+  ]
+}

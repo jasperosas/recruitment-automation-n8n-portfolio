@@ -41,6 +41,8 @@ The Gmail nodes are **disabled by default** in the published example. The workfl
 | Gmail | All 3 nodes disabled throughout; delivery not tested |
 | Final state | Separate test workflows left inactive / unpublished |
 
+An additional **pinned-input safety-gate test** passed on 5 November 2026: seven fictional inputs (including an unknown applicant, mismatched email, invalid experience and duplicate) produced only the three valid A/B/C outputs. This separate inactive copy bypassed Sheets and kept Gmail disabled. See the [edge-case test record](TESTING.md#safety-gate-edge-case-batch--5-november-2026).
+
 ## What's inside
 
 - [`workflows/recruitment-routing-manual-demo.json`](workflows/recruitment-routing-manual-demo.json) — **6-node offline-first demo**: no Gmail, no Google Sheets and no external side effects. Best first import.
