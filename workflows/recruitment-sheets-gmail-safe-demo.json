@@ -1,0 +1,395 @@
+{
+  "name": "PUBLIC DEMO — Recruitment: Sheets to Gmail (Manual, Disabled)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        120,
+        320
+      ],
+      "id": "a5ef9ec4-3d5d-40e9-8b1e-2f80c4781cf7",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_TEST_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Form Responses 1",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        340,
+        320
+      ],
+      "id": "5d2f2cee-ff62-4ffb-bcd8-a419349a9bd0",
+      "name": "Read TEST Applications (Google Sheets)"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Safety gate: allow only the three exact fictional records in our test sheet.\n// No personal applicant data is passed downstream. At most 3 items, one per demo candidate.\nconst allowed = {\n  'Demo Candidate A': { email: 'candidate-a@example.com', role: 'Office Assistant', experience: '6+ Years' },\n  'Demo Candidate B': { email: 'candidate-b@example.com', role: 'Support Specialist', experience: '3-5 Years' },\n  'Demo Candidate C': { email: 'candidate-c@example.com', role: 'Operations Assistant', experience: '0-2 Years' },\n};\nconst seen = new Set();\nconst safe = [];\nfor (const [index, item] of $input.all().entries()) {\n  const candidate = String(item.json['Full Name'] ?? '').trim();\n  const row = allowed[candidate];\n  if (!row || seen.has(candidate)) continue;\n  if (String(item.json['Email Address'] ?? '').trim().toLowerCase() !== row.email) continue;\n  if (String(item.json['Position applying for'] ?? '').trim() !== row.role) continue;\n  if (String(item.json['Years of experience'] ?? '').trim() !== row.experience) continue;\n  seen.add(candidate);\n  safe.push({\n    json: {\n      'Full Name': candidate,\n      'Email Address': row.email,\n      'Position applying for': row.role,\n      'Years of experience': row.experience,\n      'test_notice': 'Fictional data only - not a real recruitment decision',\n    },\n    pairedItem: { item: index },\n  });\n  if (safe.length === 3) break;\n}\nreturn safe;\n"
+      },
+      "id": "a0d61b31-1a00-4fd5-8c6c-6e58f4947b1b",
+      "name": "Safety Gate - Demo Candidates Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        540,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "96fa29ad-43a3-43a1-8b6c-420114f0ef00",
+                    "leftValue": "={{ $json['Years of experience'] }}",
+                    "rightValue": "6+ Years",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "6+ Years"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cc9ae527-b68a-46c1-9e50-2148290c9155",
+                    "leftValue": "={{ $json['Years of experience'] }}",
+                    "rightValue": "3-5 Years",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3-5 Years"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cd014b8f-7a6b-4629-b2ff-fa7e6ef2ee7f",
+                    "leftValue": "={{ $json['Years of experience'] }}",
+                    "rightValue": "0-2 Years",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0-2 Years"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        760,
+        320
+      ],
+      "id": "684aa872-873d-400a-85dd-8f5505cc50f2",
+      "name": "Route by Experience"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a06e52bc-103b-45b3-bb0b-219d5ef45aaf",
+              "name": "demo_routing_result",
+              "value": "Interview invitation — demo only",
+              "type": "string"
+            },
+            {
+              "id": "75e932f2-14b5-4829-b531-b558cff9a736",
+              "name": "test_notice",
+              "value": "Synthetic applicant only. Gmail stage is disabled by default; when enabled it sends to owner inbox only.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        100
+      ],
+      "id": "d8c62022-96fa-4522-b927-88a176dd6ee7",
+      "name": "Illustrative: Interview 6+"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01ed73d0-c0ce-4bda-9984-7039190ce9f2",
+              "name": "demo_routing_result",
+              "value": "Interview invitation — demo only",
+              "type": "string"
+            },
+            {
+              "id": "f5a71e14-786a-49db-b23d-46615046de5c",
+              "name": "test_notice",
+              "value": "Synthetic applicant only. Gmail stage is disabled by default; when enabled it sends to owner inbox only.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        320
+      ],
+      "id": "6296fe53-d1f1-4ddb-aae7-b5336550ce07",
+      "name": "Illustrative: Interview 3-5"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "58a72eda-fcf1-4606-ac5a-1b5271ef35ec",
+              "name": "demo_routing_result",
+              "value": "Keep on file — demo only",
+              "type": "string"
+            },
+            {
+              "id": "ddd49835-a8b7-46a6-a760-f70bc476ee1c",
+              "name": "test_notice",
+              "value": "Synthetic applicant only. Gmail stage is disabled by default; when enabled it sends to owner inbox only.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        540
+      ],
+      "id": "7cdb228f-1019-428c-b6fb-482f59b2cf40",
+      "name": "Illustrative: Keep on file 0-2"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "YOUR_TEST_INBOX@example.com",
+        "subject": "=[TEST ONLY] 6+ Years recruitment route - {{ $json['Full Name'] }}",
+        "emailType": "text",
+        "message": "=TEST ONLY - Local n8n recruitment automation.\n\nFictional applicant: {{ $json['Full Name'] }}\nPosition: {{ $json['Position applying for'] }}\nExperience: {{ $json['Years of experience'] }}\nRoute: Interview invitation route (demonstration only)\n\nThis is a controlled test to the workflow owner's inbox only. It is not a real job application, invitation, or hiring decision. Do not forward this demo email to an applicant.",
+        "options": {}
+      },
+      "id": "2688922b-9aad-463e-ba7d-1e2ed77939f0",
+      "name": "EMAIL TEST - 6+ Years (disabled)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        100
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "YOUR_TEST_INBOX@example.com",
+        "subject": "=[TEST ONLY] 3-5 Years recruitment route - {{ $json['Full Name'] }}",
+        "emailType": "text",
+        "message": "=TEST ONLY - Local n8n recruitment automation.\n\nFictional applicant: {{ $json['Full Name'] }}\nPosition: {{ $json['Position applying for'] }}\nExperience: {{ $json['Years of experience'] }}\nRoute: Interview invitation route (demonstration only)\n\nThis is a controlled test to the workflow owner's inbox only. It is not a real job application, invitation, or hiring decision. Do not forward this demo email to an applicant.",
+        "options": {}
+      },
+      "id": "0c7e7e0f-f6b2-41d8-989c-8944edcfd3f3",
+      "name": "EMAIL TEST - 3-5 Years (disabled)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        320
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "YOUR_TEST_INBOX@example.com",
+        "subject": "=[TEST ONLY] 0-2 Years recruitment route - {{ $json['Full Name'] }}",
+        "emailType": "text",
+        "message": "=TEST ONLY - Local n8n recruitment automation.\n\nFictional applicant: {{ $json['Full Name'] }}\nPosition: {{ $json['Position applying for'] }}\nExperience: {{ $json['Years of experience'] }}\nRoute: Keep-on-file notification route (demonstration only)\n\nThis is a controlled test to the workflow owner's inbox only. It is not a real job application, invitation, or hiring decision. Do not forward this demo email to an applicant.",
+        "options": {}
+      },
+      "id": "33f57533-e2a3-421f-af43-7ae27fd789bd",
+      "name": "EMAIL TEST - 0-2 Years (disabled)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        540
+      ],
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read TEST Applications (Google Sheets)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Experience": {
+      "main": [
+        [
+          {
+            "node": "Illustrative: Interview 6+",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Illustrative: Interview 3-5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Illustrative: Keep on file 0-2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read TEST Applications (Google Sheets)": {
+      "main": [
+        [
+          {
+            "node": "Safety Gate - Demo Candidates Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Safety Gate - Demo Candidates Only": {
+      "main": [
+        [
+          {
+            "node": "Route by Experience",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Illustrative: Interview 6+": {
+      "main": [
+        [
+          {
+            "node": "EMAIL TEST - 6+ Years (disabled)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Illustrative: Interview 3-5": {
+      "main": [
+        [
+          {
+            "node": "EMAIL TEST - 3-5 Years (disabled)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Illustrative: Keep on file 0-2": {
+      "main": [
+        [
+          {
+            "node": "EMAIL TEST - 0-2 Years (disabled)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

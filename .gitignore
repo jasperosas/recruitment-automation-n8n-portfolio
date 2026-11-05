@@ -1,0 +1,19 @@
+# Never commit secrets, local credentials, live exports, or execution history
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+*oauth*.json
+*token*.json
+*execution*.json
+*.sqlite
+*.db
+node_modules/
+.n8n/
+.DS_Store
+Thumbs.db
+__pycache__/

@@ -1,0 +1,293 @@
+{
+  "name": "PUBLIC DEMO — Recruitment: Routing Only (No External Services)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        120,
+        300
+      ],
+      "id": "690052b7-173f-4f3f-b66e-179fb707d781",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2413a802-086a-4988-8b92-94617c705a9c",
+              "name": "Full Name",
+              "value": "Demo Candidate",
+              "type": "string"
+            },
+            {
+              "id": "52dd6b0f-e9bc-4567-9ae2-ab5154977d6c",
+              "name": "Email Address",
+              "value": "demo-candidate@example.com",
+              "type": "string"
+            },
+            {
+              "id": "7bcffc07-16a7-4e9a-8322-0a5e7d5a272e",
+              "name": "Position applying for",
+              "value": "Office Assistant",
+              "type": "string"
+            },
+            {
+              "id": "177e7474-9143-49c7-920f-c54272caa906",
+              "name": "Years of experience",
+              "value": "3-5 Years",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        340,
+        300
+      ],
+      "id": "88a14f84-1558-4fa0-8024-aef5da7cdcab",
+      "name": "Test Applicant (Edit Fields)"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "81636b02-4d0a-4aea-a16f-0a95dc3f6510",
+                    "leftValue": "={{ $json['Years of experience'] }}",
+                    "rightValue": "6+ Years",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "6+ Years"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "af5663f0-65ed-42d8-aa8b-95ff09b308f1",
+                    "leftValue": "={{ $json['Years of experience'] }}",
+                    "rightValue": "3-5 Years",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3-5 Years"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "499c4822-c4e8-4a7f-8247-93b6d783d477",
+                    "leftValue": "={{ $json['Years of experience'] }}",
+                    "rightValue": "0-2 Years",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0-2 Years"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        560,
+        300
+      ],
+      "id": "1adb7bd5-2039-4a9a-bded-4dcbd377008c",
+      "name": "Route by Experience"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dac630d1-8ece-485a-9833-b11aa832d18a",
+              "name": "demo_routing_result",
+              "value": "Interview invitation — demo only",
+              "type": "string"
+            },
+            {
+              "id": "f8d7c76a-492a-425d-8cb9-5b47ea8bf945",
+              "name": "test_notice",
+              "value": "Synthetic example only — no emails are sent",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        830,
+        160
+      ],
+      "id": "39706292-58cb-4ced-80c6-f0e64ad64408",
+      "name": "Illustrative: Interview 6+"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36712778-9265-4a12-b12f-f747778d134c",
+              "name": "demo_routing_result",
+              "value": "Interview invitation — demo only",
+              "type": "string"
+            },
+            {
+              "id": "650d02d8-af2f-4f57-a452-c4dd279dac70",
+              "name": "test_notice",
+              "value": "Synthetic example only — no emails are sent",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        830,
+        320
+      ],
+      "id": "8c64b241-2ffd-43e1-8934-eece8c814ab5",
+      "name": "Illustrative: Interview 3-5"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "efce201b-65c5-491e-a803-21a71e13773f",
+              "name": "demo_routing_result",
+              "value": "Keep on file — demo only",
+              "type": "string"
+            },
+            {
+              "id": "9e8d5e58-e189-49ca-84d9-e729a2042a56",
+              "name": "test_notice",
+              "value": "Synthetic example only — no emails are sent",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        830,
+        480
+      ],
+      "id": "a5dde979-335a-42ae-8516-25eff5203a10",
+      "name": "Illustrative: Keep on file 0-2"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Test Applicant (Edit Fields)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Applicant (Edit Fields)": {
+      "main": [
+        [
+          {
+            "node": "Route by Experience",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Experience": {
+      "main": [
+        [
+          {
+            "node": "Illustrative: Interview 6+",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Illustrative: Interview 3-5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Illustrative: Keep on file 0-2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
