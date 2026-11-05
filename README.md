@@ -29,6 +29,10 @@ flowchart TD
 
 The Gmail nodes are **disabled by default** in the published example. The workflow is **inactive** and uses a placeholder for the Google Sheet and receiving email. Importing it does not connect an account or enable sending.
 
+## Node-by-node documentation
+
+See [NODE_GUIDE.md](NODE_GUIDE.md) for every node in both published workflows: the **6-node manual routing demo** and the **10-node Sheets integration**. It explains inputs, exact routing rules, the fictional-record safety gate, output fields, disabled Gmail behavior and the limits of the recorded tests.
+
 ## Verified sanitized re-execution results
 
 | Check | Observed outcome |
