@@ -12,6 +12,12 @@ A recruitment workflow prototype built with n8n Community Edition on Windows wit
 
 Earlier on the same date, the owner reported receiving three branch-specific demonstration emails in their own inbox. That historical delivery report was not independently verified and is separate from this no-email re-execution.
 
+## Blank Google Sheets template
+
+Download [the blank workbook](templates/recruitment-blank-template.xlsx), upload it to Google Drive, open it with Google Sheets, then choose **File → Save as Google Sheets** if it opens in Office editing mode. It contains the `Form Responses 1` tab with the eight original form-response headers and no applicant rows. A [header-only CSV](templates/applications-headers.csv) is also available.
+
+Keep the tab name and headers unchanged. For the safe demo, add only the three fictional rows from [demo-applications.csv](examples/demo-applications.csv) to a dedicated private test copy. The safety gate accepts only those predefined fictional identities. Configure the new sheet ID locally and keep every Gmail node disabled. This template is a blank starting structure, not a connected Google Form or a new execution result.
+
 ## Workflow overview
 
 ```mermaid
